@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 220 10% 15%;
+    
+    --muted: 220 15% 90%;
+    --muted-foreground: 220 10% 40%;
+    
+    --popover: 220 20% 98%;
+    --popover-foreground: 220 10% 15%;
+    
+    --card: 220 20% 98%;
+    --card-foreground: 220 10% 15%;
+    
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    
+    --primary: 220 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 200 90% 50%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --accent: 220 15% 90%;
+    --accent-foreground: 220 10% 15%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --ring: 220 90% 50%;
+    
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 220 10% 90%;
+    
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 60%;
+    
+    --popover: 220 20% 10%;
+    --popover-foreground: 220 10% 90%;
+    
+    --card: 220 20% 10%;
+    --card-foreground: 220 10% 90%;
+    
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    
+    --primary: 220 90% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 200 90% 60%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --accent: 220 15% 15%;
+    --accent-foreground: 220 10% 90%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --ring: 220 90% 60%;
+  }
+}
+
+@layer components {
+  .card {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    color: hsl(var(--card-foreground));
+  }
+  
+  .btn {
+    border-radius: var(--radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .btn-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(var(--primary) / 0.9);
+  }
+  
+  .btn-secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(var(--secondary) / 0.9);
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+  
+  .btn-outline:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+  
+  .btn-destructive {
+    background-color: hsl(var(--destructive));
+    color: hsl(var(--destructive-foreground));
+  }
+  
+  .btn-destructive:hover {
+    background-color: hsl(var(--destructive) / 0.9);
+  }
+  
+  .input {
+    border: 1px solid hsl(var(--input));
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+  }
+  
+  .card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .bg-gradient-custom {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
+  }
+  
+  .backdrop-blur-effect {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .transition-transform-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .transition-transform-hover:hover {
+    transform: translateY(-4px);
+  }
+  
+  .hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+}
