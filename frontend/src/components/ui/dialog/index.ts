@@ -1,8 +1,8 @@
 export { default as Dialog } from './Dialog.vue'
+export { default as DialogContent } from './DialogContent.vue'
 
 // 重新导出 radix-vue 的组件以保持一致性
 export { 
-  DialogContent,
   DialogTitle,
   DialogDescription
 } from 'radix-vue'

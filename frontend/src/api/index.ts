@@ -97,3 +97,47 @@ export const getThumbnail = (imagePath: string) => {
     throw error
   }
 }
+
+// 获取时间线数据
+export const getPhotosByTimeline = async () => {
+  try {
+    const response = await apiClient.get('/photos/timeline')
+    return response.data
+  } catch (error) {
+    console.error('获取时间线数据失败:', error)
+    throw error
+  }
+}
+
+// 获取地理位置数据
+export const getPhotosByLocation = async () => {
+  try {
+    const response = await apiClient.get('/photos/location')
+    return response.data
+  } catch (error) {
+    console.error('获取地理位置数据失败:', error)
+    throw error
+  }
+}
+
+// 获取人物识别数据
+export const getPhotosByPeople = async () => {
+  try {
+    const response = await apiClient.get('/photos/people')
+    return response.data
+  } catch (error) {
+    console.error('获取人物识别数据失败:', error)
+    throw error
+  }
+}
+
+// 生成故事
+export const generateStory = async (photoIds: string[]) => {
+  try {
+    const response = await apiClient.post('/generate-story', { photoIds })
+    return response.data
+  } catch (error) {
+    console.error('生成故事失败:', error)
+    throw error
+  }
+}

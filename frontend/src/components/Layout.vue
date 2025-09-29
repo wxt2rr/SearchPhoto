@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { Home, Search, Folder, Settings } from 'lucide-vue-next'
+import { Home, Search, Folder, Settings, Clock, MapPin, Users, BookOpen, ChevronDown } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import { ref } from 'vue'
 
-// 定义导航项
+// 定义基础导航项
 const navItems = [
   { name: '首页', path: '/', icon: Home },
   { name: '搜索', path: '/search', icon: Search },
-  { name: '文件夹', path: '/folders', icon: Folder },
-  { name: '设置', path: '/settings', icon: Settings }
+  { name: '文件夹', path: '/folders', icon: Folder }
 ]
+
+// 定义高级功能导航项
+const advancedItems = [
+  { name: '时间轴', path: '/timeline', icon: Clock },
+  { name: '地理位置', path: '/location', icon: MapPin },
+  { name: '人物识别', path: '/people', icon: Users },
+  { name: 'AI故事', path: '/stories', icon: BookOpen }
+]
+
+const showAdvancedMenu = ref(false)
 </script>
 
 <template>
@@ -38,6 +48,36 @@ const navItems = [
             <component :is="item.icon" class="w-4 h-4" />
             {{ item.name }}
           </RouterLink>
+          
+          <!-- 高级功能下拉菜单 -->
+          <div class="relative" @mouseenter="showAdvancedMenu = true" @mouseleave="showAdvancedMenu = false">
+            <button 
+              class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-accent"
+              :class="advancedItems.some(item => $route.path === item.path) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+            >
+              <Settings class="w-4 h-4" />
+              高级功能
+              <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': showAdvancedMenu }" />
+            </button>
+            
+            <div 
+              v-show="showAdvancedMenu"
+              class="absolute top-full left-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50"
+            >
+              <div class="py-2">
+                <RouterLink 
+                  v-for="item in advancedItems"
+                  :key="item.path"
+                  :to="item.path"
+                  class="flex items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-accent"
+                  :class="$route.path === item.path ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                >
+                  <component :is="item.icon" class="w-4 h-4" />
+                  {{ item.name }}
+                </RouterLink>
+              </div>
+            </div>
+          </div>
         </nav>
         
         <!-- 移动端汉堡菜单 -->
@@ -68,6 +108,16 @@ const navItems = [
         >
           <component :is="item.icon" class="w-5 h-5" />
           <span>{{ item.name }}</span>
+        </RouterLink>
+        
+        <!-- 移动端高级功能入口 -->
+        <RouterLink 
+          to="/timeline"
+          class="flex flex-col items-center justify-center gap-1 py-2 px-4 text-xs"
+          :class="advancedItems.some(item => $route.path === item.path) ? 'text-primary' : 'text-muted-foreground'"
+        >
+          <Settings class="w-5 h-5" />
+          <span>更多</span>
         </RouterLink>
       </div>
     </nav>
