@@ -5,6 +5,18 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useImageStore } from '@/stores/imageStore'
 import { getPhotosByTimeline, getThumbnail } from '@/api'
+import { 
+  Clock, 
+  MapPin, 
+  Users, 
+  Calendar,
+  Camera,
+  FileImage,
+  Sun,
+  Moon,
+  Activity,
+  BookOpen
+} from 'lucide-vue-next'
 
 const imageStore = useImageStore()
 
@@ -96,9 +108,7 @@ onMounted(() => {
               @click="viewMode = 'timeline'"
               class="rounded-md"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Clock class="h-4 w-4 mr-2" />
               时间轴
             </Button>
             <Button
@@ -107,9 +117,7 @@ onMounted(() => {
               @click="viewMode = 'calendar'"
               class="rounded-md"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <Calendar class="h-4 w-4 mr-2" />
               日历
             </Button>
             <Button
@@ -118,9 +126,7 @@ onMounted(() => {
               @click="viewMode = 'story'"
               class="rounded-md"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
+              <BookOpen class="h-4 w-4 mr-2" />
               故事
             </Button>
           </div>
@@ -155,9 +161,7 @@ onMounted(() => {
     <!-- 空状态 -->
     <div v-else-if="timelineData.length === 0" class="text-center py-16">
       <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
+        <Camera class="h-12 w-12 text-muted-foreground" />
       </div>
       <h3 class="text-xl font-medium mb-2">暂无照片</h3>
       <p class="text-muted-foreground">请先添加一些照片到您的图库中</p>
@@ -177,9 +181,7 @@ onMounted(() => {
           <!-- 时间节点 -->
           <div class="flex flex-col items-center">
             <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-glow">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <Camera class="h-6 w-6 text-primary-foreground" />
             </div>
             <div class="text-sm text-muted-foreground mt-2 text-center">
               {{ formatDate(item.date) }}
@@ -195,16 +197,11 @@ onMounted(() => {
                     <CardTitle class="text-xl group-hover:text-primary transition-colors">{{ item.title }}</CardTitle>
                     <CardDescription class="flex items-center gap-4 mt-2">
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                        <MapPin class="h-4 w-4" />
                         {{ item.location }}
                       </span>
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <Camera class="h-4 w-4" />
                         {{ item.images.length }} 张照片
                       </span>
                     </CardDescription>
@@ -221,10 +218,8 @@ onMounted(() => {
                     class="aspect-square rounded-lg overflow-hidden bg-muted group-hover:scale-105 transition-transform cursor-pointer"
                   >
                     <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
+                        <Camera class="h-8 w-8 text-muted-foreground" />
+                      </div>
                   </div>
                   <div 
                     v-if="item.images.length > 4"
@@ -287,9 +282,7 @@ onMounted(() => {
                 :class="{ 'md:col-span-2': index === 0 && item.images.length > 2 }"
               >
                 <div class="w-full h-full flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <Camera class="h-12 w-12 text-muted-foreground" />
                 </div>
               </div>
             </div>
@@ -313,9 +306,7 @@ onMounted(() => {
     <!-- 日历视图 -->
     <div v-else-if="viewMode === 'calendar'" class="text-center py-16">
       <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
+        <Calendar class="h-12 w-12 text-muted-foreground" />
       </div>
       <h3 class="text-xl font-medium mb-2">日历视图</h3>
       <p class="text-muted-foreground">日历视图功能正在开发中...</p>

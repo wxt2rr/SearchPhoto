@@ -7,6 +7,26 @@ import { RouterLink, useRouter } from 'vue-router'
 import { useImageStore } from '@/stores/imageStore'
 import { useSearchStore } from '@/stores/searchStore'
 import { computed, ref, onMounted } from 'vue'
+import {
+  Home as HomeIcon,
+  Search as SearchIcon,
+  Folder,
+  Camera,
+  MapPin,
+  Users,
+  Clock,
+  BarChart3,
+  Sparkles,
+  Image as ImageIcon,
+  Activity,
+  Eye,
+  Download,
+  Share2,
+  Settings,
+  Calendar,
+  Zap,
+  Plus
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const imageStore = useImageStore()
@@ -105,9 +125,7 @@ onMounted(() => {
               <!-- Search Input -->
               <div class="relative mb-6">
                 <div class="absolute left-6 top-1/2 -translate-y-1/2 z-10">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+                  <SearchIcon class="h-6 w-6 text-muted-foreground" />
                 </div>
                 <Input 
                   v-model="searchQuery" 
@@ -170,17 +188,13 @@ onMounted(() => {
         <div v-if="!stats.hasData" class="text-center mb-16">
           <div class="max-w-md mx-auto">
             <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
+              <Folder class="h-12 w-12 text-muted-foreground" />
             </div>
             <h3 class="text-2xl font-semibold mb-4">开始使用智能搜索</h3>
             <p class="text-muted-foreground mb-6">首先需要添加包含照片的文件夹</p>
             <RouterLink to="/folders">
               <Button size="lg" class="px-8">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
+                <Plus class="h-5 w-5 mr-2" />
                 添加文件夹
               </Button>
             </RouterLink>
@@ -271,9 +285,7 @@ onMounted(() => {
           <Card class="border-0 bg-card/50 backdrop-blur-sm group-hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
             <CardContent class="p-8 text-center">
               <div class="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <SearchIcon class="h-8 w-8 text-primary" />
               </div>
               <h3 class="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">高级搜索</h3>
               <p class="text-muted-foreground">使用以图搜图和更多搜索选项</p>
@@ -285,9 +297,7 @@ onMounted(() => {
           <Card class="border-0 bg-card/50 backdrop-blur-sm group-hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
             <CardContent class="p-8 text-center">
               <div class="bg-secondary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-secondary/20 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
+                <Folder class="h-8 w-8 text-secondary" />
               </div>
               <h3 class="text-xl font-semibold mb-2 group-hover:text-secondary transition-colors">文件夹管理</h3>
               <p class="text-muted-foreground">添加和管理照片文件夹</p>

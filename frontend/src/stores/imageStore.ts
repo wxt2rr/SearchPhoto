@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { processFolder, getProcessingStatus } from '@/api'
+import { processFolder, getProcessingStatus, reindexFolder } from '@/api'
+import { useSettingStore } from '@/stores/settingStore'
 
 interface Folder {
   id: number
@@ -132,9 +133,49 @@ export const useImageStore = defineStore('image', () => {
   }
   
   // 刷新文件夹
-  const refreshFolder = (folderId: number) => {
+  const refreshFolder = async (folderId: number) => {
     console.log(`刷新文件夹 ${folderId}`)
+    // 查找文件夹路径
+    const folder = processedFolders.value.find(f => f.id === folderId)
+    if (!folder) {
+      throw new Error(`未找到ID为 ${folderId} 的文件夹`)
+    }
+    
+    // 获取当前选择的模型
+    const settingStore = useSettingStore()
+    const selectedModel = settingStore.selectedModel
+    
     // 这里会调用后端API重新处理文件夹
+    try {
+      const result = await reindexFolder(folder.path, selectedModel)
+      
+      // 更新文件夹状态为处理中
+      const folderIndex = processedFolders.value.findIndex(f => f.id === folderId)
+      if (folderIndex !== -1) {
+        processedFolders.value[folderIndex] = {
+          ...processedFolders.value[folderIndex],
+          status: 'processing'
+        }
+      }
+      
+      // 添加到处理任务列表
+      processingTasks.value[result.taskId] = {
+        taskId: result.taskId,
+        folderPath: folder.path,
+        progress: 0,
+        status: 'processing',
+        processed: 0,
+        total: 0
+      }
+      
+      // 开始轮询处理状态
+      pollProcessingStatus(result.taskId)
+      
+      return result.taskId
+    } catch (error) {
+      console.error('重新索引文件夹失败:', error)
+      throw error
+    }
   }
   
   return {

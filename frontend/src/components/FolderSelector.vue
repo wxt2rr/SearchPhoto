@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsItem } from '@/components/ui/tabs'
+import { Folder, FolderOpen, Upload, Edit3, Check, Info, FolderSync } from 'lucide-vue-next'
 
 // Props
 interface Props {
@@ -159,9 +160,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
       <DialogHeader>
         <DialogTitle class="flex items-center gap-3 text-2xl">
           <div class="bg-primary/10 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
+            <Folder class="h-6 w-6 text-primary" />
           </div>
           选择照片文件夹
         </DialogTitle>
@@ -172,21 +171,15 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
         <Tabs v-model:modelValue="selectedMethod" :defaultValue="selectedMethod" class="w-full">
           <TabsList class="grid w-full grid-cols-3">
             <TabsItem value="browse" class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
+              <Folder class="h-4 w-4" />
               浏览选择
             </TabsItem>
             <TabsItem value="drag" class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-              </svg>
+              <Upload class="h-4 w-4" />
               拖拽上传
             </TabsItem>
             <TabsItem value="input" class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
+              <Edit3 class="h-4 w-4" />
               手动输入
             </TabsItem>
           </TabsList>
@@ -197,18 +190,14 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
               <CardContent class="p-8 text-center">
                 <div class="mb-4">
                   <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
+                    <Folder class="h-8 w-8 text-primary" />
                   </div>
                   <h3 class="text-lg font-semibold mb-2">选择包含照片的文件夹</h3>
                   <p class="text-muted-foreground mb-6">点击下方按钮打开系统文件夹选择器</p>
                 </div>
                 
                 <Button @click="handleBrowseFolder" size="lg" class="px-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                  </svg>
+                  <FolderOpen class="h-5 w-5 mr-2" />
                   浏览文件夹
                 </Button>
               </CardContent>
@@ -300,9 +289,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
                       验证路径中...
                     </div>
                     <div v-else-if="folderPath && !validationError" class="flex items-center gap-2 text-sm text-green-600">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Check class="h-4 w-4" />
                       路径有效
                     </div>
                   </div>
@@ -310,9 +297,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
 
                 <!-- 路径格式提示 -->
                 <Alert>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Info class="h-4 w-4" />
                   <AlertDescription>
                     <strong>路径格式示例:</strong><br/>
                     • macOS: <code>/Users/用户名/Pictures</code><br/>
@@ -327,9 +312,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
 
         <!-- 错误提示 -->
         <Alert v-if="validationError" variant="destructive">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <Info class="h-4 w-4" />
           <AlertDescription>{{ validationError }}</AlertDescription>
         </Alert>
 
@@ -338,9 +321,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
           <CardContent class="p-4">
             <div class="flex items-start gap-3">
               <div class="bg-green-100 p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
+                <Folder class="h-5 w-5 text-green-600" />
               </div>
               <div class="flex-1">
                 <h4 class="font-medium text-green-800 mb-1">已选择文件夹</h4>
@@ -382,9 +363,7 @@ const selectCommonFolder = async (folder: typeof commonFolders[0]) => {
               验证中...
             </span>
             <span v-else class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
+              <Check class="h-4 w-4 mr-2" />
               确认添加
             </span>
           </Button>

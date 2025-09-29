@@ -8,6 +8,31 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { useSearchStore } from '@/stores/searchStore'
 import { useImageStore } from '@/stores/imageStore'
+import { 
+  Home, 
+  Search as SearchIcon, 
+  Folder, 
+  Settings, 
+  Clock, 
+  MapPin, 
+  Users, 
+  BookOpen,
+  ChevronDown,
+  Upload,
+  Image as ImageIcon,
+  Camera,
+  X,
+  Loader,
+  Sparkles,
+  Calendar,
+  Eye,
+  Download,
+  Share2,
+  BarChart3,
+  LayoutGrid,
+  Info,
+  AlertTriangle
+} from 'lucide-vue-next'
 
 const searchStore = useSearchStore()
 const imageStore = useImageStore()
@@ -191,9 +216,7 @@ onMounted(() => {
                   @click="searchMode = 'text'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                  </svg>
+                  <Users class="h-4 w-4 mr-2" />
                   文本搜索
                 </Button>
                 <Button
@@ -202,9 +225,7 @@ onMounted(() => {
                   @click="searchMode = 'image'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <Camera class="h-4 w-4 mr-2" />
                   以图搜图
                 </Button>
                 <Button
@@ -213,9 +234,7 @@ onMounted(() => {
                   @click="searchMode = 'combined'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                  <BarChart3 class="h-4 w-4 mr-2" />
                   智能搜索
                 </Button>
               </div>
@@ -225,9 +244,7 @@ onMounted(() => {
             <div v-if="searchMode === 'text' || searchMode === 'combined'" class="mb-6">
               <div class="relative">
                 <div class="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+                  <SearchIcon class="h-5 w-5 text-muted-foreground" />
                 </div>
                 <Input 
                   v-model="searchQuery" 
@@ -261,9 +278,7 @@ onMounted(() => {
               >
                 <div v-if="!imagePreviewUrl" class="flex flex-col items-center justify-center gap-4">
                   <div class="bg-primary/10 p-4 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
+                    <Upload class="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <p class="font-medium">拖拽图片到这里或点击上传</p>
@@ -294,9 +309,7 @@ onMounted(() => {
                       class="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0"
                       @click="clearImageSearch"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      <X class="h-4 w-4" />
                     </Button>
                   </div>
                   <p class="text-sm text-muted-foreground">正在搜索相似图片...</p>
@@ -312,13 +325,9 @@ onMounted(() => {
                 @click="showAdvancedOptions = !showAdvancedOptions"
                 class="text-muted-foreground"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                </svg>
+                <LayoutGrid class="h-4 w-4 mr-2" />
                 高级选项
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transition-transform" :class="{ 'rotate-180': showAdvancedOptions }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
+                <ChevronDown class="h-4 w-4 ml-2 transition-transform" :class="{ 'rotate-180': showAdvancedOptions }" />
               </Button>
 
               <!-- 搜索历史 -->
@@ -417,11 +426,9 @@ onMounted(() => {
                 size="sm"
                 @click="gridSize = size"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path v-if="size === 'small'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  <path v-else-if="size === 'medium'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 14a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
-                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
+                <LayoutGrid class="h-4 w-4" v-if="size === 'small'" />
+                <LayoutGrid class="h-4 w-4" v-else-if="size === 'medium'" />
+                <LayoutGrid class="h-4 w-4" v-else />
               </Button>
             </div>
           </div>
@@ -483,9 +490,7 @@ onMounted(() => {
           <div class="relative mb-6">
             <div class="animate-spin rounded-full h-16 w-16 border-4 border-primary/20 border-t-primary"></div>
             <div class="absolute inset-0 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <SearchIcon class="h-8 w-8 text-primary" />
             </div>
           </div>
           <h3 class="text-xl font-medium mb-2">AI正在分析您的搜索</h3>
@@ -500,9 +505,7 @@ onMounted(() => {
       <DialogContent class="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <Info class="h-5 w-5" />
             图像智能分析
           </DialogTitle>
         </DialogHeader>
@@ -581,9 +584,7 @@ onMounted(() => {
             </CardHeader>
             <CardContent>
               <div v-if="!currentImageInfo.possible_descriptions || currentImageInfo.possible_descriptions.length === 0" class="text-center py-8 text-muted-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 20.5a7.962 7.962 0 01-5.657-2.343m11.314 0C19.763 16.05 21 14.137 21 12s-1.237-4.05-3.343-6.157M12 3.5a8.001 8.001 0 00-8 8c0 2.137 1.237 4.05 3.343 6.157" />
-                </svg>
+                <Sparkles class="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>未找到高置信度的内容描述</p>
               </div>
               <div v-else class="flex flex-wrap gap-2">
@@ -617,9 +618,7 @@ onMounted(() => {
         </div>
         
         <div v-else class="py-12 text-center text-muted-foreground">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
+          <AlertTriangle class="h-16 w-16 mx-auto mb-4 opacity-50" />
           <h3 class="text-lg font-medium mb-2">无法获取图像信息</h3>
           <p class="text-sm">可能的原因：图像文件不存在、格式不支持或服务暂时不可用</p>
         </div>

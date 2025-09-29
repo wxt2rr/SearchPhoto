@@ -8,6 +8,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { useImageStore } from '@/stores/imageStore'
 import FolderSelector from '@/components/FolderSelector.vue'
+import {
+  Folder,
+  FolderOpen,
+  Loader,
+  Check,
+  X,
+  Clock,
+  MapPin,
+  Users,
+  Image as ImageIcon,
+  AlertTriangle,
+  Eye,
+  Download,
+  Upload,
+  Settings,
+  Home,
+  Search,
+  Plus,
+  Zap,
+  Trash
+} from 'lucide-vue-next'
 
 const imageStore = useImageStore()
 
@@ -200,9 +221,7 @@ onMounted(() => {
         <CardHeader class="text-center">
           <CardTitle class="text-2xl flex items-center justify-center gap-3">
             <div class="bg-primary/10 p-2 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              <Plus class="h-6 w-6 text-primary" />
             </div>
             添加新的照片文件夹
           </CardTitle>
@@ -211,9 +230,7 @@ onMounted(() => {
         <CardContent>
           <div class="flex flex-col items-center">
             <Button @click="handleSelectFolder" size="lg" class="px-12 py-6 text-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
+              <FolderOpen class="h-6 w-6 mr-3" />
               选择文件夹
             </Button>
             <div class="mt-6 text-center">
@@ -236,9 +253,7 @@ onMounted(() => {
         <div v-if="groupedFolders.processing.length > 0">
           <div class="flex items-center gap-3 mb-6">
             <div class="bg-blue-500/10 p-2 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
+              <Loader class="h-5 w-5 text-blue-600 animate-spin" />
             </div>
             <h2 class="text-2xl font-bold text-blue-600">正在处理</h2>
             <Badge variant="secondary">{{ groupedFolders.processing.length }}</Badge>
@@ -254,9 +269,7 @@ onMounted(() => {
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-4 flex-1">
                     <div class="bg-blue-500/10 p-3 rounded-xl">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getStatusIcon(folder.status)" />
-                      </svg>
+                      <Loader class="h-8 w-8 text-blue-600 animate-spin" />
                     </div>
                     <div class="flex-1">
                       <h3 class="text-xl font-semibold mb-2">{{ folder.name }}</h3>
@@ -278,15 +291,11 @@ onMounted(() => {
                         />
                         <div class="flex items-center gap-4 text-sm text-muted-foreground">
                           <div class="flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <Clock class="h-4 w-4" />
                             开始时间: {{ formatTime(folder.lastProcessed) }}
                           </div>
                           <div class="flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
+                            <Zap class="h-4 w-4" />
                             预计剩余: {{ getTaskByPath(folder.path)?.estimatedTime || '计算中...' }}
                           </div>
                         </div>
@@ -303,9 +312,7 @@ onMounted(() => {
         <div v-if="groupedFolders.completed.length > 0">
           <div class="flex items-center gap-3 mb-6">
             <div class="bg-green-500/10 p-2 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
+              <Check class="h-5 w-5 text-green-600" />
             </div>
             <h2 class="text-2xl font-bold text-green-600">已完成索引</h2>
             <Badge variant="secondary">{{ groupedFolders.completed.length }}</Badge>
@@ -321,9 +328,10 @@ onMounted(() => {
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-4 flex-1">
                     <div class="bg-green-500/10 p-3 rounded-xl group-hover:bg-green-500/20 transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getStatusIcon(folder.status)" />
-                      </svg>
+                      <Check class="h-8 w-8 text-green-600" v-if="folder.status === 'completed'" />
+                      <Loader class="h-8 w-8 text-blue-600 animate-spin" v-else-if="folder.status === 'processing'" />
+                      <AlertTriangle class="h-8 w-8 text-red-600" v-else-if="folder.status === 'failed'" />
+                      <Folder class="h-8 w-8 text-primary" v-else />
                     </div>
                     <div class="flex-1">
                       <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">{{ folder.name }}</h3>
@@ -331,25 +339,19 @@ onMounted(() => {
                       
                       <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="flex items-center gap-2 text-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                          <ImageIcon class="h-4 w-4 text-muted-foreground" />
                           <span class="font-medium">{{ folder.imageCount }}</span>
                           <span class="text-muted-foreground">张照片</span>
                         </div>
                         <div class="flex items-center gap-2 text-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                          <Clock class="h-4 w-4 text-muted-foreground" />
                           <span class="text-muted-foreground">{{ formatTime(folder.lastProcessed) }}</span>
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-2">
                         <Badge variant="outline" class="text-green-600 border-green-600/20">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                          </svg>
+                          <Check class="h-3 w-3 mr-1" />
                           已完成
                         </Badge>
                       </div>
@@ -363,9 +365,7 @@ onMounted(() => {
                       @click="handleRefresh(folder.id)"
                       class="opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
+                      <Loader class="h-4 w-4 mr-1" />
                       重新索引
                     </Button>
                     <Button 
@@ -374,9 +374,7 @@ onMounted(() => {
                       @click="confirmRemove(folder)"
                       class="opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <Trash class="h-4 w-4 mr-1" />
                       移除
                     </Button>
                   </div>
@@ -390,9 +388,7 @@ onMounted(() => {
         <div v-if="groupedFolders.failed.length > 0">
           <div class="flex items-center gap-3 mb-6">
             <div class="bg-red-500/10 p-2 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X class="h-5 w-5 text-red-600" />
             </div>
             <h2 class="text-2xl font-bold text-red-600">处理失败</h2>
             <Badge variant="destructive">{{ groupedFolders.failed.length }}</Badge>
@@ -408,9 +404,10 @@ onMounted(() => {
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-4 flex-1">
                     <div class="bg-red-500/10 p-3 rounded-xl">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getStatusIcon(folder.status)" />
-                      </svg>
+                      <X class="h-8 w-8 text-red-600" v-if="folder.status === 'failed'" />
+                      <Loader class="h-8 w-8 text-blue-600 animate-spin" v-else-if="folder.status === 'processing'" />
+                      <Check class="h-8 w-8 text-green-600" v-else-if="folder.status === 'completed'" />
+                      <Folder class="h-8 w-8 text-primary" v-else />
                     </div>
                     <div class="flex-1">
                       <h3 class="text-xl font-semibold mb-2">{{ folder.name }}</h3>
@@ -427,9 +424,7 @@ onMounted(() => {
                       size="sm"
                       @click="handleRefresh(folder.id)"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
+                      <Loader class="h-4 w-4 mr-1" />
                       重试
                     </Button>
                     <Button 
@@ -437,9 +432,7 @@ onMounted(() => {
                       size="sm"
                       @click="confirmRemove(folder)"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <Trash class="h-4 w-4 mr-1" />
                       移除
                     </Button>
                   </div>
@@ -454,16 +447,12 @@ onMounted(() => {
       <div v-else class="text-center py-16">
         <div class="max-w-md mx-auto">
           <div class="bg-muted/50 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
+            <Folder class="h-16 w-16 text-muted-foreground" />
           </div>
           <h3 class="text-2xl font-semibold mb-4">还没有添加任何文件夹</h3>
           <p class="text-muted-foreground mb-8">添加包含照片的文件夹，开始构建你的智能相册索引</p>
           <Button @click="handleSelectFolder" size="lg" class="px-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            <Plus class="h-5 w-5 mr-2" />
             添加第一个文件夹
           </Button>
         </div>
@@ -481,9 +470,7 @@ onMounted(() => {
       <DialogContent class="max-w-md">
         <DialogHeader>
           <DialogTitle class="flex items-center gap-2 text-red-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+            <AlertTriangle class="h-5 w-5" />
             确认移除文件夹
           </DialogTitle>
         </DialogHeader>

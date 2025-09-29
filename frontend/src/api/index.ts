@@ -1,7 +1,7 @@
 // /Users/wangxt/myspace/SearchPhoto/frontend/src/api/index.ts
 import axios from 'axios'
 
-const API_BASE_URL = 'http://127.0.0.1:5000/api'
+const API_BASE_URL = 'http://127.0.0.1:9527/api'
 
 // 创建axios实例
 const apiClient = axios.create({
@@ -71,6 +71,20 @@ export const processFolder = async (folderPath: string) => {
     return response.data
   } catch (error) {
     console.error('处理文件夹失败:', error)
+    throw error
+  }
+}
+
+// 重新索引文件夹
+export const reindexFolder = async (folderPath: string, model?: string) => {
+  try {
+    const response = await apiClient.post('/reindex-folder', { 
+      folderPath,
+      model: model || undefined
+    })
+    return response.data
+  } catch (error) {
+    console.error('重新索引文件夹失败:', error)
     throw error
   }
 }

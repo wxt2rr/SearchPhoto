@@ -1,25 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { Home, Search, Folder, Settings, Clock, MapPin, Users, BookOpen, ChevronDown } from 'lucide-vue-next'
+import { Home, Search, Folder, Settings, Clock, BookOpen, Menu } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue'
 
-// 定义基础导航项
+// 定义导航项
 const navItems = [
   { name: '首页', path: '/', icon: Home },
   { name: '搜索', path: '/search', icon: Search },
-  { name: '文件夹', path: '/folders', icon: Folder }
-]
-
-// 定义高级功能导航项
-const advancedItems = [
+  { name: '文件夹', path: '/folders', icon: Folder },
   { name: '时间轴', path: '/timeline', icon: Clock },
-  { name: '地理位置', path: '/location', icon: MapPin },
-  { name: '人物识别', path: '/people', icon: Users },
-  { name: 'AI故事', path: '/stories', icon: BookOpen }
+  { name: 'AI故事', path: '/stories', icon: BookOpen },
+  { name: '设置', path: '/settings', icon: Settings }
 ]
-
-const showAdvancedMenu = ref(false)
 </script>
 
 <template>
@@ -37,7 +30,7 @@ const showAdvancedMenu = ref(false)
         </RouterLink>
         
         <!-- 桌面端导航 -->
-        <nav class="hidden md:flex items-center gap-6">
+        <nav class="hidden md:flex items-center gap-1"> <!-- 缩小gap -->
           <RouterLink 
             v-for="item in navItems" 
             :key="item.path"
@@ -48,46 +41,12 @@ const showAdvancedMenu = ref(false)
             <component :is="item.icon" class="w-4 h-4" />
             {{ item.name }}
           </RouterLink>
-          
-          <!-- 高级功能下拉菜单 -->
-          <div class="relative" @mouseenter="showAdvancedMenu = true" @mouseleave="showAdvancedMenu = false">
-            <button 
-              class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-accent"
-              :class="advancedItems.some(item => $route.path === item.path) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-            >
-              <Settings class="w-4 h-4" />
-              高级功能
-              <ChevronDown class="w-3 h-3 transition-transform" :class="{ 'rotate-180': showAdvancedMenu }" />
-            </button>
-            
-            <div 
-              v-show="showAdvancedMenu"
-              class="absolute top-full left-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50"
-            >
-              <div class="py-2">
-                <RouterLink 
-                  v-for="item in advancedItems"
-                  :key="item.path"
-                  :to="item.path"
-                  class="flex items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-accent"
-                  :class="$route.path === item.path ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                >
-                  <component :is="item.icon" class="w-4 h-4" />
-                  {{ item.name }}
-                </RouterLink>
-              </div>
-            </div>
-          </div>
         </nav>
         
         <!-- 移动端汉堡菜单 -->
-        <div class="md:hidden">
-          <Button variant="ghost" size="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </Button>
-        </div>
+        <Button variant="ghost" size="icon" class="lg:hidden">
+          <Menu class="h-5 w-5" />
+        </Button>
       </div>
     </header>
 
@@ -100,24 +59,24 @@ const showAdvancedMenu = ref(false)
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t">
       <div class="flex justify-around">
         <RouterLink 
-          v-for="item in navItems" 
+          v-for="item in navItems.slice(0, 4)"  <!-- 只显示前4个导航项 -->
           :key="item.path"
           :to="item.path"
-          class="flex flex-col items-center justify-center gap-1 py-2 px-4 text-xs"
+          class="flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs"
           :class="$route.path === item.path ? 'text-primary' : 'text-muted-foreground'"
         >
           <component :is="item.icon" class="w-5 h-5" />
           <span>{{ item.name }}</span>
         </RouterLink>
         
-        <!-- 移动端高级功能入口 -->
+        <!-- 为设置页添加特殊处理 -->
         <RouterLink 
-          to="/timeline"
-          class="flex flex-col items-center justify-center gap-1 py-2 px-4 text-xs"
-          :class="advancedItems.some(item => $route.path === item.path) ? 'text-primary' : 'text-muted-foreground'"
+          :to="navItems[5].path"
+          class="flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs"
+          :class="$route.path === navItems[5].path ? 'text-primary' : 'text-muted-foreground'"
         >
-          <Settings class="w-5 h-5" />
-          <span>更多</span>
+          <component :is="navItems[5].icon" class="w-5 h-5" />
+          <span>{{ navItems[5].name }}</span>
         </RouterLink>
       </div>
     </nav>

@@ -266,3 +266,28 @@ class SemanticSearchService(SearchServiceInterface):
         except Exception as e:
             print(f"图像搜索失败: {e}")
             return []
+
+    def set_model(self, model_name: str):
+        """设置使用的模型"""
+        try:
+            # 根据模型名称加载相应的模型
+            if model_name == 'clip-vit-base-patch32':
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+            elif model_name == 'clip-vit-large-patch14':
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
+            elif model_name == 'blip-base':
+                # BLIP模型需要不同的处理方式
+                # 这里可以添加对BLIP模型的支持
+                print("BLIP模型支持将在后续版本中添加")
+                return
+            else:
+                # 默认使用CLIP ViT-B/32
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+            
+            # 确保模型处于评估模式
+            self.clip_model.eval()
+        except Exception as e:
+            print(f"设置模型失败: {e}")

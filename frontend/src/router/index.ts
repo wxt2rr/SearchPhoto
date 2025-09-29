@@ -6,6 +6,7 @@ import TimelineView from '@/components/TimelineView.vue'
 import LocationView from '@/components/LocationView.vue'
 import PeopleView from '@/components/PeopleView.vue'
 import StoryGenerator from '@/components/StoryGenerator.vue'
+import Settings from '@/views/Settings.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/stories',
       name: 'stories',
       component: StoryGenerator
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: Settings
     }
   ]
 })

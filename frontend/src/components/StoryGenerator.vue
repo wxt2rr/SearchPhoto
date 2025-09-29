@@ -6,6 +6,22 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { generateStory as apiGenerateStory, getThumbnail } from '@/api'
+import { 
+  BookOpen, 
+  Calendar, 
+  MapPin, 
+  Users, 
+  Camera, 
+  Clock,
+  Copy,
+  Download,
+  Share2,
+  Sparkles,
+  Image as ImageIcon,
+  Play,
+  MoreHorizontal,
+  Heart
+} from 'lucide-vue-next'
 
 // 故事数据
 const stories = ref<any[]>([])
@@ -316,9 +332,7 @@ onMounted(() => {
           size="lg"
           class="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-8 py-3 text-lg"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
+          <Sparkles class="h-6 w-6 mr-2" />
           创作新故事
         </Button>
       </div>
@@ -343,24 +357,18 @@ onMounted(() => {
                   <div class="flex items-center gap-3 mb-3">
                     <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">{{ story.title }}</h2>
                     <Badge v-if="story.aiGenerated" variant="secondary" class="bg-gradient-to-r from-ai-500/20 to-neural-500/20 text-ai-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
+                      <Sparkles class="h-3 w-3 mr-1" />
                       AI生成
                     </Badge>
                   </div>
                   
                   <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
                     <span class="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                      <Calendar class="h-4 w-4" />
                       {{ formatDate(story.date) }}
                     </span>
                     <span class="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      </svg>
+                      <MapPin class="h-4 w-4" />
                       {{ story.location }}
                     </span>
                     <span class="flex items-center gap-1" :class="getMoodColor(story.mood)">
@@ -368,10 +376,7 @@ onMounted(() => {
                       {{ story.mood }}
                     </span>
                     <span class="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
+                      <ImageIcon class="h-4 w-4" />
                       {{ story.views }}
                     </span>
                   </div>
@@ -380,20 +385,14 @@ onMounted(() => {
                 <!-- 操作按钮 -->
                 <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="ghost" size="sm" @click.stop="likeStory(story)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
+                    <Heart class="h-4 w-4 mr-1" />
                     {{ story.likes }}
                   </Button>
                   <Button variant="ghost" size="sm" @click.stop="shareStory(story)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                    </svg>
+                    <Share2 class="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="sm" @click.stop="exportStory(story)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <Download class="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -438,9 +437,7 @@ onMounted(() => {
                       :class="{ 'col-span-2': index === 0 && story.images.length > 1 }"
                     >
                       <div class="w-full h-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <Camera class="h-8 w-8 text-muted-foreground" />
                       </div>
                     </div>
                     <div 
@@ -483,15 +480,11 @@ onMounted(() => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
             <div class="space-y-2">
               <div class="flex items-center gap-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Calendar class="h-4 w-4" />
                 <strong>日期:</strong> {{ formatDate(selectedStory.date) }}
               </div>
               <div class="flex items-center gap-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
+                <MapPin class="h-4 w-4" />
                 <strong>地点:</strong> {{ selectedStory.location }}
               </div>
             </div>
@@ -501,9 +494,7 @@ onMounted(() => {
                 <strong>情绪:</strong> {{ selectedStory.mood }}
               </div>
               <div class="flex items-center gap-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Camera class="h-4 w-4" />
                 <strong>照片:</strong> {{ selectedStory.images.length }} 张
               </div>
             </div>
@@ -522,9 +513,7 @@ onMounted(() => {
               class="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 hover:scale-105 transition-transform cursor-pointer"
             >
               <div class="w-full h-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Camera class="h-8 w-8 text-muted-foreground" />
               </div>
             </div>
           </div>
@@ -558,9 +547,7 @@ onMounted(() => {
       <DialogContent class="max-w-2xl">
         <DialogHeader>
           <DialogTitle class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+            <Sparkles class="h-5 w-5" />
             AI故事生成
           </DialogTitle>
         </DialogHeader>
@@ -570,9 +557,7 @@ onMounted(() => {
           <div>
             <label class="text-sm font-medium mb-3 block">选择照片 (最多10张)</label>
             <div class="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-muted-foreground mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <Camera class="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <p class="text-muted-foreground mb-2">点击选择照片或拖拽到此处</p>
               <p class="text-sm text-muted-foreground">支持 JPG、PNG 格式</p>
             </div>
@@ -621,9 +606,7 @@ onMounted(() => {
         <!-- 生成进度 -->
         <div v-else class="space-y-6 text-center py-8">
           <div class="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center animate-pulse">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+            <Sparkles class="h-8 w-8 text-white" />
           </div>
           <div>
             <h3 class="text-lg font-medium mb-2">AI正在创作故事...</h3>

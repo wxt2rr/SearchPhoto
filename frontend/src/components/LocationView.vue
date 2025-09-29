@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { getPhotosByLocation, getThumbnail } from '@/api'
+import { Search as SearchIcon, AlignLeft, MapPin as MapPinIcon, Activity, Zap, Camera, Clock } from 'lucide-vue-next'
 
 // 地理位置数据
 const locationData = ref<any[]>([])
@@ -235,9 +236,7 @@ onMounted(() => {
             <div class="flex-1">
               <div class="relative">
                 <div class="absolute left-3 top-1/2 -translate-y-1/2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+                  <SearchIcon class="h-5 w-5 text-muted-foreground" />
                 </div>
                 <Input 
                   v-model="searchQuery" 
@@ -256,9 +255,7 @@ onMounted(() => {
                   @click="viewMode = 'list'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                  </svg>
+                  <AlignLeft class="h-4 w-4 mr-2" />
                   列表
                 </Button>
                 <Button
@@ -267,9 +264,7 @@ onMounted(() => {
                   @click="viewMode = 'map'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
+                  <MapPinIcon class="h-4 w-4 mr-2" />
                   地图
                 </Button>
                 <Button
@@ -278,9 +273,7 @@ onMounted(() => {
                   @click="viewMode = 'heatmap'"
                   class="rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                  <Activity class="h-4 w-4 mr-2" />
                   热力图
                 </Button>
               </div>
@@ -311,9 +304,7 @@ onMounted(() => {
       <!-- 热门地点 -->
       <div class="mb-8">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
+          <Zap class="h-6 w-6 text-primary" />
           热门拍摄地点
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -342,18 +333,14 @@ onMounted(() => {
                   class="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:scale-105 transition-transform"
                 >
                   <div class="w-full h-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    <Camera class="h-6 w-6 text-muted-foreground" />
                   </div>
                 </div>
               </div>
               
               <div class="flex justify-between items-center text-sm text-muted-foreground">
                 <span class="flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <Camera class="h-4 w-4" />
                   {{ location.imageCount }} 张照片
                 </span>
                 <span>{{ formatLastVisit(location.lastVisit) }}</span>
@@ -384,21 +371,15 @@ onMounted(() => {
                     <p class="text-muted-foreground text-sm mb-3">{{ location.address }}</p>
                     <div class="flex items-center gap-6 text-sm text-muted-foreground">
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <Camera class="h-4 w-4" />
                         {{ location.imageCount }} 张照片
                       </span>
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <Clock class="h-4 w-4" />
                         {{ formatLastVisit(location.lastVisit) }}
                       </span>
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        </svg>
+                        <MapPinIcon class="h-4 w-4" />
                         {{ formatDistance(location.coordinates) }}
                       </span>
                     </div>
@@ -413,9 +394,7 @@ onMounted(() => {
                     class="w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:scale-105 transition-transform"
                   >
                     <div class="w-full h-full flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                      <Camera class="h-6 w-6 text-muted-foreground" />
                     </div>
                   </div>
                   <div 
@@ -435,9 +414,7 @@ onMounted(() => {
     <!-- 地图视图 -->
     <div v-else-if="viewMode === 'map'" class="text-center py-16">
       <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-        </svg>
+        <MapPinIcon class="h-12 w-12 text-muted-foreground" />
       </div>
       <h3 class="text-xl font-medium mb-2">地图视图</h3>
       <p class="text-muted-foreground">地图视图功能正在开发中...</p>
@@ -446,9 +423,7 @@ onMounted(() => {
     <!-- 热力图视图 -->
     <div v-else-if="viewMode === 'heatmap'" class="text-center py-16">
       <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
+        <Activity class="h-12 w-12 text-muted-foreground" />
       </div>
       <h3 class="text-xl font-medium mb-2">热力图视图</h3>
       <p class="text-muted-foreground">热力图视图功能正在开发中...</p>

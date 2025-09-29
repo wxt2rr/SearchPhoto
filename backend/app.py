@@ -112,17 +112,18 @@ def search_by_image():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def process_folder_impl(folder_path: str, task_id: str):
+def process_folder_impl(folder_path: str, task_id: str, model: str = 'clip-vit-base-patch32'):
     """实际的文件夹处理实现"""
     global processing_status
     try:
-        # 在处理开始时记录文件夹路径
+        # 在处理开始时记录文件夹路径和模型
         processing_status[task_id] = {
             "status": "processing", 
             "progress": 0, 
             "total": 0, 
             "processed": 0, 
-            "folderPath": folder_path  # 添加文件夹路径
+            "folderPath": folder_path,  # 添加文件夹路径
+            "model": model  # 添加模型信息
         }
         
         # 获取文件夹中的所有图像文件
@@ -140,6 +141,8 @@ def process_folder_impl(folder_path: str, task_id: str):
         # 逐个处理图像
         for i, image_path in enumerate(image_files):
             try:
+                # 使用指定模型处理图像
+                search_service.set_model(model)  # 设置模型
                 search_service.add_image(image_path)
                 processing_status[task_id]["processed"] = i + 1
                 processing_status[task_id]["progress"] = int((i + 1) / total_files * 100)
@@ -191,6 +194,33 @@ def get_processing_status(task_id: str):
         return jsonify(processing_status[task_id])
     else:
         return jsonify({"error": "Task not found"}), 404
+
+
+@app.route('/api/reindex-folder', methods=['POST'])
+def reindex_folder():
+    """重新索引文件夹"""
+    try:
+        data = request.get_json()
+        folder_path = data.get('folderPath')
+        model = data.get('model', 'clip-vit-base-patch32')  # 默认模型
+        
+        if not folder_path:
+            return jsonify({"error": "Folder path is required"}), 400
+        
+        if not os.path.isdir(folder_path):
+            return jsonify({"error": "Invalid folder path"}), 400
+        
+        # 生成任务ID
+        task_id = f"reindex_task_{int(time.time())}"
+        
+        # 在新线程中重新处理文件夹，传递模型参数
+        thread = threading.Thread(target=process_folder_impl, args=(folder_path, task_id, model))
+        thread.start()
+        
+        return jsonify({"taskId": task_id, "message": f"Started reindexing folder {folder_path} with model {model}"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/thumbnails/<path:filename>', methods=['GET'])
 def get_thumbnail(filename: str):
@@ -349,4 +379,4 @@ def get_image_info():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5001)
+    app.run(debug=True, host='127.0.0.1', port=9527)
