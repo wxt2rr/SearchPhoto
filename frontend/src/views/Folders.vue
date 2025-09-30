@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useImageStore } from '@/stores/imageStore'
+import { useSettingStore } from '@/stores/settingStore'
 import FolderSelector from '@/components/FolderSelector.vue'
 import {
   Folder,
@@ -27,10 +28,12 @@ import {
   Search,
   Plus,
   Zap,
-  Trash
+  Trash,
+  Brain
 } from 'lucide-vue-next'
 
 const imageStore = useImageStore()
+const settingStore = useSettingStore()
 
 // 状态管理
 const showAddDialog = ref(false)
@@ -168,8 +171,21 @@ const formatTime = (dateString: string) => {
   return date.toLocaleDateString('zh-CN')
 }
 
-onMounted(() => {
-  // 初始化
+// 将后端模型名称映射到显示名称
+const getModelDisplayName = (modelName: string) => {
+  const modelMapping = {
+    'openai/clip-vit-base-patch32': 'CLIP ViT-B/32',
+    'openai/clip-vit-large-patch14': 'CLIP ViT-L/14',
+    'OFA-Sys/chinese-clip-vit-base-patch16': 'Chinese CLIP ViT-B/16',
+    'sentence-transformers/clip-ViT-B-32-multilingual-v1': 'Multilingual CLIP ViT-B/32',
+    'Salesforce/blip-image-captioning-base': 'BLIP Base'
+  }
+  return modelMapping[modelName] || modelName
+}
+
+onMounted(async () => {
+  // 获取当前模型信息
+  await settingStore.fetchCurrentModel()
 })
 </script>
 
@@ -297,6 +313,10 @@ onMounted(() => {
                           <div class="flex items-center gap-1">
                             <Zap class="h-4 w-4" />
                             预计剩余: {{ getTaskByPath(folder.path)?.estimatedTime || '计算中...' }}
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <Brain class="h-4 w-4" />
+                            使用模型: {{ getModelDisplayName(getTaskByPath(folder.path)?.model || settingStore.currentModel?.name || '未知') }}
                           </div>
                         </div>
                       </div>

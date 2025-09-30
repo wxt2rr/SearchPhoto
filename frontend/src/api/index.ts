@@ -41,12 +41,14 @@ export const searchByImage = async (imageFile: File | string, topK: number = 10)
       // 使用FormData上传文件
       const formData = new FormData()
       formData.append('image', imageFile)
-      formData.append('topK', topK.toString())
       
-      // 发送multipart/form-data请求
-      const response = await axios.post(`${API_BASE_URL}/search-by-image`, formData, {
+      // 发送multipart/form-data请求，使用apiClient但设置特殊headers
+      const response = await apiClient.post('/search-by-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        params: {
+          topK: topK
         }
       })
       return response.data
@@ -152,6 +154,28 @@ export const generateStory = async (photoIds: string[]) => {
     return response.data
   } catch (error) {
     console.error('生成故事失败:', error)
+    throw error
+  }
+}
+
+// 获取当前模型信息
+export const getCurrentModel = async () => {
+  try {
+    const response = await apiClient.get('/get-model')
+    return response.data
+  } catch (error) {
+    console.error('获取模型信息失败:', error)
+    throw error
+  }
+}
+
+// 设置AI模型
+export const setModel = async (model: string) => {
+  try {
+    const response = await apiClient.post('/set-model', { model })
+    return response.data
+  } catch (error) {
+    console.error('设置模型失败:', error)
     throw error
   }
 }

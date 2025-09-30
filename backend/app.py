@@ -86,6 +86,9 @@ def search_by_image():
             if image_file.filename == '':
                 return jsonify({"error": "No image file provided"}), 400
             
+            # 从查询参数或表单数据获取topK
+            top_k = int(request.args.get('topK', 10))
+            
             # 将上传的文件保存到临时文件
             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(image_file.filename)[1]) as temp_file:
                 image_file.save(temp_file.name)
@@ -93,7 +96,7 @@ def search_by_image():
             
             try:
                 # 使用临时文件进行搜索
-                results = search_service.search_by_image(temp_path, top_k=request.json.get('topK', 10) if request.json else 10)
+                results = search_service.search_by_image(temp_path, top_k=top_k)
                 return jsonify({"results": results})
             finally:
                 # 删除临时文件
@@ -101,6 +104,9 @@ def search_by_image():
         else:
             # 情况2: 使用本地路径
             data = request.get_json()
+            if not data:
+                return jsonify({"error": "No data provided"}), 400
+                
             image_path = data.get('imagePath')
             top_k = data.get('topK', 10)  # 获取返回结果数量，默认10
             
@@ -110,6 +116,7 @@ def search_by_image():
             results = search_service.search_by_image(image_path, top_k=top_k)
             return jsonify({"results": results})
     except Exception as e:
+        print(f"搜索图片时出错: {str(e)}")  # 添加调试日志
         return jsonify({"error": str(e)}), 500
 
 def process_folder_impl(folder_path: str, task_id: str, model: str = 'clip-vit-base-patch32'):
@@ -130,10 +137,21 @@ def process_folder_impl(folder_path: str, task_id: str, model: str = 'clip-vit-b
         image_extensions = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp')
         image_files = []
         
-        for root, dirs, files in os.walk(folder_path):
-            for file in files:
-                if file.lower().endswith(image_extensions):
-                    image_files.append(os.path.join(root, file))
+        try:
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    if file.lower().endswith(image_extensions):
+                        image_files.append(os.path.join(root, file))
+        except PermissionError as e:
+            print(f"权限不足，无法访问文件夹 {folder_path}: {e}")
+            processing_status[task_id]["status"] = "failed"
+            processing_status[task_id]["error"] = f"权限不足，无法访问文件夹: {str(e)}"
+            return
+        except Exception as e:
+            print(f"扫描文件夹失败 {folder_path}: {e}")
+            processing_status[task_id]["status"] = "failed"
+            processing_status[task_id]["error"] = f"扫描文件夹失败: {str(e)}"
+            return
         
         total_files = len(image_files)
         processing_status[task_id]["total"] = total_files
@@ -178,8 +196,11 @@ def process_folder():
         # 生成任务ID
         task_id = f"task_{int(time.time())}"
         
+        # 获取当前使用的模型
+        current_model = search_service.current_model_name
+        
         # 在新线程中处理文件夹
-        thread = threading.Thread(target=process_folder_impl, args=(folder_path, task_id))
+        thread = threading.Thread(target=process_folder_impl, args=(folder_path, task_id, current_model))
         thread.start()
         
         return jsonify({"taskId": task_id, "message": f"Started processing folder {folder_path}"})
@@ -376,6 +397,380 @@ def get_image_info():
         print(f"获取图像信息失败: {e}")
         import traceback
         traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/photos/timeline', methods=['GET'])
+def get_photos_timeline():
+    """获取按时间线组织的照片数据"""
+    try:
+        # 获取所有图片路径和元数据
+        if not hasattr(search_service, 'image_paths') or not search_service.image_paths:
+            return jsonify([])
+        
+        timeline_data = []
+        from datetime import datetime
+        import os
+        from PIL import Image
+        from PIL.ExifTags import TAGS
+        
+        for image_path in search_service.image_paths:
+            try:
+                if not os.path.exists(image_path):
+                    continue
+                
+                # 获取文件修改时间作为拍摄时间
+                file_stat = os.stat(image_path)
+                date_taken = datetime.fromtimestamp(file_stat.st_mtime)
+                
+                # 尝试从EXIF获取真实拍摄时间
+                try:
+                    with Image.open(image_path) as img:
+                        exif_data = img._getexif()
+                        if exif_data:
+                            for tag_id, value in exif_data.items():
+                                tag = TAGS.get(tag_id, tag_id)
+                                if tag == "DateTime":
+                                    try:
+                                        date_taken = datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                                    except:
+                                        pass
+                except:
+                    pass
+                
+                # 获取图片基本信息
+                metadata = search_service.image_metadata.get(image_path, {})
+                
+                timeline_data.append({
+                    "id": len(timeline_data),
+                    "path": image_path,
+                    "date": date_taken.isoformat(),
+                    "title": os.path.basename(image_path),
+                    "location": metadata.get("location", "未知位置"),
+                    "tags": metadata.get("tags", []),
+                    "metadata": metadata
+                })
+                
+            except Exception as e:
+                print(f"处理图片 {image_path} 时出错: {e}")
+                continue
+        
+        # 按日期排序
+        timeline_data.sort(key=lambda x: x["date"], reverse=True)
+        
+        return jsonify(timeline_data)
+        
+    except Exception as e:
+        print(f"获取时间线数据失败: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/photos/location', methods=['GET'])
+def get_photos_location():
+    """获取按地理位置组织的照片数据"""
+    try:
+        if not hasattr(search_service, 'image_paths') or not search_service.image_paths:
+            return jsonify([])
+        
+        location_data = {}
+        
+        for image_path in search_service.image_paths:
+            try:
+                if not os.path.exists(image_path):
+                    continue
+                
+                metadata = search_service.image_metadata.get(image_path, {})
+                location = metadata.get("location", "未知位置")
+                
+                if location not in location_data:
+                    location_data[location] = {
+                        "name": location,
+                        "images": [],
+                        "count": 0
+                    }
+                
+                location_data[location]["images"].append({
+                    "path": image_path,
+                    "title": os.path.basename(image_path),
+                    "metadata": metadata
+                })
+                location_data[location]["count"] += 1
+                
+            except Exception as e:
+                print(f"处理图片 {image_path} 时出错: {e}")
+                continue
+        
+        # 转换为列表格式
+        result = list(location_data.values())
+        # 按图片数量排序
+        result.sort(key=lambda x: x["count"], reverse=True)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"获取地理位置数据失败: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/photos/people', methods=['GET'])
+def get_photos_people():
+    """获取按人物组织的照片数据"""
+    try:
+        if not hasattr(search_service, 'image_paths') or not search_service.image_paths:
+            return jsonify([])
+        
+        # 模拟人物数据，实际应该使用人脸识别
+        people_data = [
+            {
+                "id": 1,
+                "name": "未识别人物",
+                "images": [],
+                "count": 0
+            }
+        ]
+        
+        for image_path in search_service.image_paths:
+            try:
+                if not os.path.exists(image_path):
+                    continue
+                
+                metadata = search_service.image_metadata.get(image_path, {})
+                
+                # 简单检测是否包含人物（基于文件名或路径）
+                if any(keyword in image_path.lower() for keyword in ['person', 'people', 'portrait', '人物', '肖像']):
+                    people_data[0]["images"].append({
+                        "path": image_path,
+                        "title": os.path.basename(image_path),
+                        "metadata": metadata
+                    })
+                    people_data[0]["count"] += 1
+                
+            except Exception as e:
+                print(f"处理图片 {image_path} 时出错: {e}")
+                continue
+        
+        # 过滤掉没有图片的人物
+        result = [person for person in people_data if person["count"] > 0]
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"获取人物数据失败: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/validate-folder', methods=['POST'])
+def validate_folder():
+    """验证文件夹是否存在且包含支持的图片文件"""
+    try:
+        data = request.get_json()
+        folder_path = data.get('folderPath')
+        
+        if not folder_path:
+            return jsonify({"valid": False, "error": "未提供文件夹路径"}), 400
+        
+        # 检查文件夹是否存在
+        if not os.path.exists(folder_path):
+            return jsonify({"valid": False, "error": "文件夹不存在"}), 200
+        
+        if not os.path.isdir(folder_path):
+            return jsonify({"valid": False, "error": "路径不是文件夹"}), 200
+        
+        # 支持的图片格式
+        image_extensions = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp')
+        
+        # 扫描文件夹中的图片文件
+        image_files = []
+        try:
+            for filename in os.listdir(folder_path):
+                if filename.lower().endswith(image_extensions):
+                    image_files.append(filename)
+        except PermissionError:
+            # 权限不足时，仍然允许用户尝试添加文件夹
+            # 后端处理时会再次检查权限
+            return jsonify({
+                "valid": True, 
+                "imageCount": 0,
+                "message": "无法扫描文件夹内容，但可以尝试添加",
+                "warning": "权限不足，将在处理时再次检查"
+            })
+        
+        if not image_files:
+            return jsonify({"valid": False, "error": "该文件夹中未找到支持的图片文件"}), 200
+        
+        return jsonify({
+            "valid": True,
+            "imageCount": len(image_files),
+            "message": f"找到 {len(image_files)} 个图片文件"
+        })
+        
+    except Exception as e:
+        print(f"验证文件夹失败: {e}")
+        return jsonify({"valid": False, "error": "验证文件夹时发生错误"}), 500
+
+@app.route('/api/get-model', methods=['GET'])
+def get_current_model():
+    """获取当前使用的AI模型信息"""
+    try:
+        current_model_name = search_service.current_model_name
+        
+        # 模型名称映射到显示名称
+        model_display_names = {
+            'openai/clip-vit-base-patch32': 'CLIP ViT-B/32',
+            'openai/clip-vit-large-patch14': 'CLIP ViT-L/14',
+            'OFA-Sys/chinese-clip-vit-base-patch16': 'Chinese CLIP ViT-B/16',
+            'sentence-transformers/clip-ViT-B-32-multilingual-v1': 'Multilingual CLIP ViT-B/32',
+            'Salesforce/blip-image-captioning-base': 'BLIP Base'
+        }
+        
+        display_name = model_display_names.get(current_model_name, current_model_name)
+        
+        return jsonify({
+            "model_id": current_model_name,
+            "display_name": display_name,
+            "index_count": search_service.index.ntotal if search_service.index else 0
+        })
+        
+    except Exception as e:
+        print(f"获取模型信息失败: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/set-model', methods=['POST'])
+def set_model():
+    """设置AI模型"""
+    try:
+        data = request.get_json()
+        model_name = data.get('model')
+        
+        if not model_name:
+            return jsonify({"error": "未提供模型名称"}), 400
+        
+        print(f"收到模型切换请求: {model_name}")
+        
+        # 检查模型是否有效
+        valid_models = [
+            'clip-vit-base-patch32',
+            'clip-vit-large-patch14', 
+            'chinese-clip-vit-base-patch16',
+            'multilingual-clip-vit-base-patch32',
+            'blip-base'
+        ]
+        
+        if model_name not in valid_models:
+            return jsonify({"error": f"无效的模型名称: {model_name}"}), 400
+        
+        # 切换模型
+        old_model = search_service.current_model_name
+        search_service.set_model(model_name)
+        
+        # 检查是否需要重建索引
+        needs_rebuild = search_service.index.ntotal > 0
+        
+        if needs_rebuild:
+            # 生成重建任务ID
+            rebuild_task_id = f"rebuild_model_{int(time.time())}"
+            
+            # 在后台线程中重建索引
+            def rebuild_index_task():
+                try:
+                    processing_status[rebuild_task_id] = {
+                        "status": "processing",
+                        "progress": 0,
+                        "total": search_service.index.ntotal,
+                        "processed": 0,
+                        "message": f"正在使用新模型 {model_name} 重建索引..."
+                    }
+                    
+                    search_service.rebuild_index_with_new_model_progress(rebuild_task_id, processing_status)
+                    
+                    processing_status[rebuild_task_id]["status"] = "completed"
+                    processing_status[rebuild_task_id]["message"] = "索引重建完成"
+                    
+                except Exception as e:
+                    processing_status[rebuild_task_id]["status"] = "failed"
+                    processing_status[rebuild_task_id]["message"] = f"索引重建失败: {str(e)}"
+                    print(f"索引重建失败: {e}")
+            
+            thread = threading.Thread(target=rebuild_index_task)
+            thread.start()
+            
+            return jsonify({
+                "message": f"模型已切换为 {model_name}",
+                "rebuildTaskId": rebuild_task_id,
+                "needsRebuild": True,
+                "oldModel": old_model,
+                "newModel": model_name
+            })
+        else:
+            return jsonify({
+                "message": f"模型已切换为 {model_name}",
+                "needsRebuild": False,
+                "oldModel": old_model,
+                "newModel": model_name
+            })
+            
+    except Exception as e:
+        print(f"设置模型失败: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/generate-story', methods=['POST'])
+def generate_story():
+    """根据照片生成故事"""
+    try:
+        data = request.get_json()
+        photo_ids = data.get('photoIds', [])
+        
+        if not photo_ids:
+            return jsonify({"error": "未提供照片ID"}), 400
+        
+        # 模拟故事生成逻辑
+        import random
+        from datetime import datetime
+        
+        story_templates = [
+            "这是一个关于美好时光的故事。在这些珍贵的瞬间里，记录了生活中的点点滴滴。",
+            "时光荏苒，这些照片见证了许多难忘的回忆。每一张图片都诉说着独特的故事。",
+            "在这个特别的时刻，镜头捕捉到了最真实的情感。这些画面将永远珍藏在心中。",
+            "生活就像一本相册，每一页都记录着不同的精彩。这些照片串联起了美好的回忆。"
+        ]
+        
+        locations = ["公园", "海边", "山顶", "城市", "家中", "咖啡厅", "学校", "办公室"]
+        emotions = ["快乐", "温馨", "宁静", "激动", "感动", "惊喜", "满足", "幸福"]
+        
+        # 生成故事内容
+        story_content = random.choice(story_templates)
+        story_location = random.choice(locations)
+        story_emotion = random.choice(emotions)
+        
+        # 构建完整故事
+        full_story = f"在{story_location}，{story_content} 整个过程充满了{story_emotion}的氛围，让人回味无穷。"
+        
+        # 获取相关照片信息
+        story_images = []
+        for photo_id in photo_ids[:10]:  # 最多处理10张照片
+            try:
+                photo_index = int(photo_id)
+                if 0 <= photo_index < len(search_service.image_paths):
+                    image_path = search_service.image_paths[photo_index]
+                    if os.path.exists(image_path):
+                        story_images.append({
+                            "id": photo_id,
+                            "path": image_path,
+                            "title": os.path.basename(image_path)
+                        })
+            except (ValueError, IndexError):
+                continue
+        
+        result = {
+            "id": f"story_{int(datetime.now().timestamp())}",
+            "title": f"AI生成故事 - {story_emotion}的{story_location}时光",
+            "content": full_story,
+            "images": story_images,
+            "created_at": datetime.now().isoformat(),
+            "tags": [story_location, story_emotion, "AI生成"],
+            "summary": f"包含{len(story_images)}张照片的{story_emotion}故事"
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"生成故事失败: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

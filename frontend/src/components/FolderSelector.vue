@@ -107,23 +107,39 @@ const validatePath = async (path: string) => {
   validationError.value = ''
   
   try {
-    // 模拟路径验证
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
     // 简单的路径格式验证
     if (!path.includes('/') && !path.includes('\\')) {
       validationError.value = '请输入有效的文件夹路径'
       return
     }
     
-    // 模拟检查文件夹是否存在和包含图片
-    const hasImages = Math.random() > 0.3 // 70% 概率包含图片
-    if (!hasImages) {
-      validationError.value = '该文件夹中未找到支持的图片文件'
+    // 调用后端API验证文件夹
+    const response = await fetch('/api/validate-folder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ folderPath: path })
+    })
+    
+    if (!response.ok) {
+      throw new Error('验证请求失败')
+    }
+    
+    const result = await response.json()
+    
+    if (!result.valid) {
+      validationError.value = result.error || '该文件夹中未找到支持的图片文件'
       return
     }
     
+    // 如果有警告信息，显示给用户但不阻止继续
+    if (result.warning) {
+      console.warn('文件夹验证警告:', result.warning)
+    }
+    
   } catch (error) {
+    console.error('验证文件夹失败:', error)
     validationError.value = '无法访问该文件夹，请检查路径是否正确'
   } finally {
     isValidating.value = false

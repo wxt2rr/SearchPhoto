@@ -30,7 +30,8 @@ const navItems = [
         </RouterLink>
         
         <!-- 桌面端导航 -->
-        <nav class="hidden md:flex items-center gap-1"> <!-- 缩小gap -->
+        <!-- 缩小gap -->
+        <nav class="hidden md:flex items-center gap-1">
           <RouterLink 
             v-for="item in navItems" 
             :key="item.path"
@@ -59,7 +60,7 @@ const navItems = [
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t">
       <div class="flex justify-around">
         <RouterLink 
-          v-for="item in navItems.slice(0, 4)"  <!-- 只显示前4个导航项 -->
+          v-for="item in navItems.slice(0, 4)"
           :key="item.path"
           :to="item.path"
           class="flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs"

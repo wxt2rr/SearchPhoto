@@ -89,7 +89,11 @@ const groupedResults = computed(() => {
   ]
   
   results.forEach(result => {
-    const group = groups.find(g => result.similarity >= g.min && result.similarity < g.max)
+    // 修复边界条件：最高分组包含等于max的情况
+    const group = groups.find(g => 
+      result.similarity >= g.min && 
+      (g.max === 1.0 ? result.similarity <= g.max : result.similarity < g.max)
+    )
     if (group) group.results.push(result)
   })
   
@@ -284,16 +288,20 @@ onMounted(() => {
                     <p class="font-medium">拖拽图片到这里或点击上传</p>
                     <p class="text-sm text-muted-foreground mt-1">支持 JPG、PNG、WebP 格式</p>
                   </div>
-                  <Input 
+                  <input 
                     type="file" 
                     accept="image/*"
                     @change="handleImageUpload"
                     class="hidden"
                     id="image-upload"
+                    ref="fileInput"
                   />
-                  <label for="image-upload">
-                    <Button variant="secondary">选择图片</Button>
-                  </label>
+                  <Button 
+                    variant="secondary"
+                    @click="$refs.fileInput?.click()"
+                  >
+                    选择图片
+                  </Button>
                 </div>
                 
                 <div v-else class="flex flex-col items-center">

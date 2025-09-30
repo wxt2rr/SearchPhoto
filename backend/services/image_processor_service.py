@@ -19,6 +19,7 @@ class ImageFeatureExtractor(ImageProcessorInterface):
         # 这使用了OpenAI的CLIP模型，它可以将图像和文本映射到同一特征空间
         self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
         self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+        self.current_model = "openai/clip-vit-base-patch32"
         
         # 用于文本编码的模型
         self.text_encoder = SentenceTransformer('all-MiniLM-L6-v2')
@@ -51,6 +52,40 @@ class ImageFeatureExtractor(ImageProcessorInterface):
             print(f"Error extracting features for {image_path}: {e}")
             # 如果出错，返回一个零向量
             return [0.0] * 512  # CLIP base模型的特征维度是512
+
+    def set_model(self, model_name: str):
+        """设置使用的模型"""
+        try:
+            # 根据模型名称加载相应的模型
+            if model_name == 'clip-vit-base-patch32':
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+                self.current_model = "openai/clip-vit-base-patch32"
+            elif model_name == 'clip-vit-large-patch14':
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
+                self.current_model = "openai/clip-vit-large-patch14"
+            elif model_name == 'chinese-clip-vit-base-patch16':
+                # Chinese CLIP 模型
+                self.clip_model = CLIPModel.from_pretrained("OFA-Sys/chinese-clip-vit-base-patch16")
+                self.clip_processor = CLIPProcessor.from_pretrained("OFA-Sys/chinese-clip-vit-base-patch16")
+                self.current_model = "OFA-Sys/chinese-clip-vit-base-patch16"
+            elif model_name == 'multilingual-clip-vit-base-patch32':
+                # Multilingual CLIP 模型
+                self.clip_model = CLIPModel.from_pretrained("sentence-transformers/clip-ViT-B-32-multilingual-v1")
+                self.clip_processor = CLIPProcessor.from_pretrained("sentence-transformers/clip-ViT-B-32-multilingual-v1")
+                self.current_model = "sentence-transformers/clip-ViT-B-32-multilingual-v1"
+            else:
+                # 默认使用CLIP ViT-B/32
+                self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+                self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+                self.current_model = "openai/clip-vit-base-patch32"
+            
+            # 确保模型处于评估模式
+            self.clip_model.eval()
+            print(f"图像处理器成功加载模型: {model_name}")
+        except Exception as e:
+            print(f"图像处理器设置模型失败: {e}")
     
     def generate_thumbnail(self, image_path: str, size: Tuple[int, int] = (128, 128)) -> bytes:
         """生成缩略图"""
