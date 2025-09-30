@@ -37,6 +37,7 @@ export const useSettingStore = defineStore('setting', () => {
   
   // 模型切换状态
   const isModelSwitching = ref(false)
+  const switchingToModel = ref<string | null>(null)
   const rebuildProgress = ref(0)
   
   // 设置选择的模型
@@ -48,6 +49,7 @@ export const useSettingStore = defineStore('setting', () => {
     
     try {
       isModelSwitching.value = true
+      switchingToModel.value = modelId
       rebuildProgress.value = 0
       
       console.log(`切换模型到: ${modelId}`)
@@ -67,6 +69,7 @@ export const useSettingStore = defineStore('setting', () => {
       throw error
     } finally {
       isModelSwitching.value = false
+      switchingToModel.value = null
     }
   }
   
@@ -122,6 +125,7 @@ export const useSettingStore = defineStore('setting', () => {
     initialize,
     fetchCurrentModel,
     isModelSwitching,
+    switchingToModel,
     rebuildProgress
   }
 })

@@ -8,14 +8,7 @@ import { getPhotosByTimeline, getThumbnail } from '@/api'
 import { 
   Clock, 
   MapPin, 
-  Users, 
-  Calendar,
-  Camera,
-  FileImage,
-  Sun,
-  Moon,
-  Activity,
-  BookOpen
+  Camera
 } from 'lucide-vue-next'
 
 const imageStore = useImageStore()
@@ -24,11 +17,8 @@ const imageStore = useImageStore()
 const timelineData = ref<any[]>([])
 const isLoading = ref(false)
 
-// 选中的时间段
-const selectedPeriod = ref<'day' | 'week' | 'month' | 'year'>('month')
-
 // 时间轴视图模式
-const viewMode = ref<'timeline' | 'calendar' | 'story'>('timeline')
+const viewMode = ref('timeline')
 
 // 计算属性
 const groupedByPeriod = computed(() => {
@@ -36,15 +26,6 @@ const groupedByPeriod = computed(() => {
   return timelineData.value
 })
 
-// 生成故事描述
-const generateStory = (item: any) => {
-  const stories = [
-    `在${item.location}度过了美好的${item.title}时光，记录了${item.images.length}个珍贵瞬间。`,
-    `${item.date}这一天，${item.title}的回忆被永远定格在了这${item.images.length}张照片中。`,
-    `阳光正好，微风不燥，在${item.location}的${item.title}让人难忘。`
-  ]
-  return stories[Math.floor(Math.random() * stories.length)]
-}
 
 // 格式化日期
 const formatDate = (dateString: string) => {
@@ -68,19 +49,56 @@ const loadTimelineData = async () => {
   try {
     isLoading.value = true
     const response = await getPhotosByTimeline()
-    timelineData.value = response.map((item: any) => ({
-      ...item,
-      images: item.images.map((image: any) => ({
-        ...image,
-        thumbnail: getThumbnail(image.path)
-      }))
-    }))
+    
+    // 检查响应数据是否存在且为数组
+    if (response && Array.isArray(response)) {
+      // 按日期分组图片
+      const groupedData: { [key: string]: any } = {}
+      
+      response.forEach((item: any) => {
+        const date = new Date(item.date).toDateString()
+        
+        if (!groupedData[date]) {
+          groupedData[date] = {
+            date: item.date,
+            title: `照片回忆 - ${new Date(item.date).toLocaleDateString('zh-CN')}`,
+            location: item.location || '未知位置',
+            weather: '晴朗',
+            tags: item.tags || [],
+            images: []
+          }
+        }
+        
+        groupedData[date].images.push({
+          ...item,
+          thumbnail: getThumbnail(item.path)
+        })
+      })
+      
+      // 转换为数组并按日期排序
+      timelineData.value = Object.values(groupedData)
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    } else {
+      console.warn('时间线数据格式不正确:', response)
+      timelineData.value = []
+    }
   } catch (error) {
     console.error('加载时间线数据失败:', error)
     // 如果API失败，使用空数据
     timelineData.value = []
   } finally {
     isLoading.value = false
+  }
+}
+
+// 处理图片加载错误
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+  // 显示占位符
+  const placeholder = img.nextElementSibling as HTMLElement
+  if (placeholder) {
+    placeholder.style.display = 'flex'
   }
 }
 
@@ -99,58 +117,8 @@ onMounted(() => {
           <p class="text-muted-foreground">按时间顺序浏览你的照片回忆</p>
         </div>
         
-        <!-- 视图模式切换 -->
-        <div class="flex items-center gap-2">
-          <div class="inline-flex rounded-lg bg-muted p-1">
-            <Button
-              :variant="viewMode === 'timeline' ? 'default' : 'ghost'"
-              size="sm"
-              @click="viewMode = 'timeline'"
-              class="rounded-md"
-            >
-              <Clock class="h-4 w-4 mr-2" />
-              时间轴
-            </Button>
-            <Button
-              :variant="viewMode === 'calendar' ? 'default' : 'ghost'"
-              size="sm"
-              @click="viewMode = 'calendar'"
-              class="rounded-md"
-            >
-              <Calendar class="h-4 w-4 mr-2" />
-              日历
-            </Button>
-            <Button
-              :variant="viewMode === 'story' ? 'default' : 'ghost'"
-              size="sm"
-              @click="viewMode = 'story'"
-              class="rounded-md"
-            >
-              <BookOpen class="h-4 w-4 mr-2" />
-              故事
-            </Button>
-          </div>
-        </div>
       </div>
 
-      <!-- 时间段选择 -->
-      <div class="flex flex-wrap gap-2">
-        <Button
-          v-for="period in [
-            { key: 'day', label: '按天', icon: '📅' },
-            { key: 'week', label: '按周', icon: '📆' },
-            { key: 'month', label: '按月', icon: '🗓️' },
-            { key: 'year', label: '按年', icon: '📊' }
-          ]"
-          :key="period.key"
-          :variant="selectedPeriod === period.key ? 'default' : 'outline'"
-          size="sm"
-          @click="selectedPeriod = period.key"
-        >
-          <span class="mr-2">{{ period.icon }}</span>
-          {{ period.label }}
-        </Button>
-      </div>
     </div>
 
     <!-- 加载状态 -->
@@ -167,8 +135,8 @@ onMounted(() => {
       <p class="text-muted-foreground">请先添加一些照片到您的图库中</p>
     </div>
 
-    <!-- 时间轴视图 -->
-    <div v-else-if="viewMode === 'timeline'" class="space-y-8">
+     <!-- 时间轴视图 -->
+     <div v-else class="space-y-8">
       <div 
         v-for="(item, index) in groupedByPeriod" 
         :key="item.date"
@@ -217,9 +185,19 @@ onMounted(() => {
                     :key="image.id"
                     class="aspect-square rounded-lg overflow-hidden bg-muted group-hover:scale-105 transition-transform cursor-pointer"
                   >
-                    <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                        <Camera class="h-8 w-8 text-muted-foreground" />
-                      </div>
+                    <img 
+                      v-if="image.thumbnail" 
+                      :src="image.thumbnail" 
+                      :alt="image.title"
+                      class="w-full h-full object-cover"
+                      @error="handleImageError"
+                    />
+                    <div 
+                      v-else
+                      class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center"
+                    >
+                      <Camera class="h-8 w-8 text-muted-foreground" />
+                    </div>
                   </div>
                   <div 
                     v-if="item.images.length > 4"
@@ -247,70 +225,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 故事视图 -->
-    <div v-else-if="viewMode === 'story'" class="space-y-12">
-      <div 
-        v-for="item in groupedByPeriod" 
-        :key="item.date"
-        class="max-w-4xl mx-auto"
-      >
-        <Card class="border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl shadow-2xl">
-          <CardContent class="p-8">
-            <!-- 故事标题 -->
-            <div class="text-center mb-8">
-              <h2 class="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                {{ item.title }}
-              </h2>
-              <p class="text-lg text-muted-foreground leading-relaxed">
-                {{ generateStory(item) }}
-              </p>
-              <div class="flex justify-center items-center gap-4 mt-4 text-sm text-muted-foreground">
-                <span>{{ formatDate(item.date) }}</span>
-                <span>•</span>
-                <span>{{ item.location }}</span>
-                <span>•</span>
-                <span>{{ item.images.length }} 张照片</span>
-              </div>
-            </div>
-            
-            <!-- 故事图片 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div 
-                v-for="(image, index) in item.images" 
-                :key="image.id"
-                class="aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 hover:scale-105 transition-transform cursor-pointer"
-                :class="{ 'md:col-span-2': index === 0 && item.images.length > 2 }"
-              >
-                <div class="w-full h-full flex items-center justify-center">
-                  <Camera class="h-12 w-12 text-muted-foreground" />
-                </div>
-              </div>
-            </div>
-            
-            <!-- 故事标签 -->
-            <div class="flex flex-wrap justify-center gap-3 mt-8">
-              <Badge 
-                v-for="tag in item.tags" 
-                :key="tag"
-                variant="outline"
-                class="px-4 py-2"
-              >
-                {{ tag }}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-
-    <!-- 日历视图 -->
-    <div v-else-if="viewMode === 'calendar'" class="text-center py-16">
-      <div class="bg-muted/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <Calendar class="h-12 w-12 text-muted-foreground" />
-      </div>
-      <h3 class="text-xl font-medium mb-2">日历视图</h3>
-      <p class="text-muted-foreground">日历视图功能正在开发中...</p>
-    </div>
   </div>
 </template>
 

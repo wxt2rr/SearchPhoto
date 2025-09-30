@@ -280,6 +280,9 @@ def image_proxy():
         if not image_path:
             return jsonify({"error": "Image path is required"}), 400
         
+        # URL解码路径
+        image_path = urllib.parse.unquote(image_path)
+        
         # 验证路径安全性
         if not os.path.exists(image_path):
             return jsonify({"error": "Image not found"}), 404

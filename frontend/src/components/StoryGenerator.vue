@@ -27,63 +27,8 @@ import {
 const stories = ref<any[]>([])
 const isLoading = ref(false)
 
-// 原来的模拟数据，现在作为备用
-const mockStories = ref([
-  {
-    id: 1,
-    title: '春日踏青记',
-    content: '阳光正好，微风不燥。在这个美好的春日午后，我们来到了西湖公园。樱花正盛，粉色的花瓣如雪花般飘洒，孩子们在草地上奔跑嬉戏，大人们悠闲地坐在湖边聊天。这一刻，时间仿佛静止了，只有快门声记录着这份美好。',
-    date: '2024-03-15',
-    location: '西湖公园',
-    people: ['张三', '李四'],
-    tags: ['春天', '踏青', '家庭', '樱花'],
-    images: [
-      { id: 1, path: '/api/image1.jpg', thumbnail: '/api/thumb1.jpg' },
-      { id: 2, path: '/api/image2.jpg', thumbnail: '/api/thumb2.jpg' },
-      { id: 3, path: '/api/image3.jpg', thumbnail: '/api/thumb3.jpg' },
-    ],
-    mood: '愉悦',
-    weather: '晴朗',
-    aiGenerated: true,
-    likes: 12,
-    views: 156
-  },
-  {
-    id: 2,
-    title: '温馨家庭聚餐',
-    content: '今天是奶奶的生日，全家人聚在一起为她庆祝。餐桌上摆满了奶奶爱吃的菜，大家围坐在一起，有说有笑。当生日蛋糕端上来的那一刻，奶奶眼中闪烁着幸福的泪花。这样的时光，是最珍贵的回忆。',
-    date: '2024-03-10',
-    location: '家中',
-    people: ['张三', '奶奶', '爸爸', '妈妈'],
-    tags: ['家庭', '生日', '聚餐', '温馨'],
-    images: [
-      { id: 4, path: '/api/image4.jpg', thumbnail: '/api/thumb4.jpg' },
-      { id: 5, path: '/api/image5.jpg', thumbnail: '/api/thumb5.jpg' },
-    ],
-    mood: '温馨',
-    weather: '室内',
-    aiGenerated: true,
-    likes: 8,
-    views: 89
-  },
-  {
-    id: 3,
-    title: '咖啡时光',
-    content: '午后的咖啡厅，阳光透过百叶窗洒在桌面上，形成斑驳的光影。一杯拿铁，一本书，还有窗外匆忙的行人。这样的慢时光，在快节奏的生活中显得格外珍贵。',
-    date: '2024-03-12',
-    location: '咖啡厅',
-    people: [],
-    tags: ['咖啡', '阅读', '独处', '慢生活'],
-    images: [
-      { id: 6, path: '/api/image6.jpg', thumbnail: '/api/thumb6.jpg' },
-    ],
-    mood: '宁静',
-    weather: '晴朗',
-    aiGenerated: false,
-    likes: 15,
-    views: 203
-  }
-])
+// 清空测试数据，使用空数组
+const mockStories = ref([])
 
 // 状态管理
 const selectedStory = ref<any>(null)
@@ -285,97 +230,84 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <!-- 头部 -->
-    <div class="mb-8">
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold mb-4">
-          <span class="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-secondary">
+  <div class="min-h-screen bg-white">
+    <div class="max-w-6xl mx-auto px-6 py-12">
+      <!-- 头部 -->
+      <div class="mb-12">
+        <div class="text-center mb-12">
+          <h1 class="text-5xl font-bold text-gray-900 mb-4">
             AI故事生成
-          </span>
-        </h1>
-        <p class="text-xl text-muted-foreground">让AI为你的照片创作美好的故事</p>
+          </h1>
+          <p class="text-xl text-gray-600">让AI为你的照片创作美好的故事</p>
+        </div>
+
+        <!-- 统计概览 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+            <div class="text-4xl font-bold text-gray-900 mb-2">{{ stories.length }}</div>
+            <div class="text-gray-600">生成故事</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+            <div class="text-4xl font-bold text-gray-900 mb-2">{{ aiGeneratedCount }}</div>
+            <div class="text-gray-600">AI创作</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+            <div class="text-4xl font-bold text-gray-900 mb-2">{{ totalViews }}</div>
+            <div class="text-gray-600">总浏览量</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+            <div class="text-4xl font-bold text-gray-900 mb-2">{{ totalLikes }}</div>
+            <div class="text-gray-600">总点赞数</div>
+          </div>
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="text-center mb-12">
+          <Button 
+            @click="startGeneration" 
+            size="lg"
+            class="bg-gray-900 text-white hover:bg-gray-800 px-12 py-6 text-lg"
+          >
+            <Sparkles class="h-6 w-6 mr-3" />
+            创作新故事
+          </Button>
+        </div>
       </div>
 
-      <!-- 统计概览 -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card class="border-0 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm">
-          <CardContent class="p-6 text-center">
-            <div class="text-3xl font-bold text-primary mb-2">{{ stories.length }}</div>
-            <div class="text-muted-foreground">生成故事</div>
-          </CardContent>
-        </Card>
-        <Card class="border-0 bg-gradient-to-br from-secondary/10 to-secondary/5 backdrop-blur-sm">
-          <CardContent class="p-6 text-center">
-            <div class="text-3xl font-bold text-secondary mb-2">{{ aiGeneratedCount }}</div>
-            <div class="text-muted-foreground">AI创作</div>
-          </CardContent>
-        </Card>
-        <Card class="border-0 bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm">
-          <CardContent class="p-6 text-center">
-            <div class="text-3xl font-bold text-green-600 mb-2">{{ totalViews }}</div>
-            <div class="text-muted-foreground">总浏览量</div>
-          </CardContent>
-        </Card>
-        <Card class="border-0 bg-gradient-to-br from-pink-500/10 to-pink-500/5 backdrop-blur-sm">
-          <CardContent class="p-6 text-center">
-            <div class="text-3xl font-bold text-pink-600 mb-2">{{ totalLikes }}</div>
-            <div class="text-muted-foreground">总点赞数</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <!-- 生成按钮 -->
-      <div class="text-center mb-8">
-        <Button 
-          @click="startGeneration" 
-          size="lg"
-          class="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-8 py-3 text-lg"
+      <!-- 故事列表 -->
+      <div class="space-y-12">
+        <div 
+          v-for="story in sortedStories" 
+          :key="story.id"
+          class="group"
         >
-          <Sparkles class="h-6 w-6 mr-2" />
-          创作新故事
-        </Button>
-      </div>
-    </div>
-
-    <!-- 故事列表 -->
-    <div class="space-y-8">
-      <div 
-        v-for="story in sortedStories" 
-        :key="story.id"
-        class="group"
-      >
-        <Card class="border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden">
-          <div class="relative">
-            <!-- 背景装饰 -->
-            <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <CardContent class="p-8 relative">
+          <div class="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+            <div class="p-8">
               <!-- 故事头部 -->
-              <div class="flex justify-between items-start mb-6">
+              <div class="flex justify-between items-start mb-8">
                 <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-3">
-                    <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">{{ story.title }}</h2>
-                    <Badge v-if="story.aiGenerated" variant="secondary" class="bg-gradient-to-r from-ai-500/20 to-neural-500/20 text-ai-700">
+                  <div class="flex items-center gap-4 mb-4">
+                    <h2 class="text-3xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors">{{ story.title }}</h2>
+                    <Badge v-if="story.aiGenerated" variant="secondary" class="bg-gray-100 text-gray-600">
                       <Sparkles class="h-3 w-3 mr-1" />
                       AI生成
                     </Badge>
                   </div>
                   
-                  <div class="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
-                    <span class="flex items-center gap-1">
+                  <div class="flex flex-wrap items-center gap-6 text-sm text-gray-500 mb-6">
+                    <span class="flex items-center gap-2">
                       <Calendar class="h-4 w-4" />
                       {{ formatDate(story.date) }}
                     </span>
-                    <span class="flex items-center gap-1">
+                    <span class="flex items-center gap-2">
                       <MapPin class="h-4 w-4" />
                       {{ story.location }}
                     </span>
-                    <span class="flex items-center gap-1" :class="getMoodColor(story.mood)">
+                    <span class="flex items-center gap-2" :class="getMoodColor(story.mood)">
                       <span>{{ getMoodIcon(story.mood) }}</span>
                       {{ story.mood }}
                     </span>
-                    <span class="flex items-center gap-1">
+                    <span class="flex items-center gap-2">
                       <ImageIcon class="h-4 w-4" />
                       {{ story.views }}
                     </span>
@@ -383,15 +315,15 @@ onMounted(() => {
                 </div>
                 
                 <!-- 操作按钮 -->
-                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="sm" @click.stop="likeStory(story)">
+                <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="sm" @click.stop="likeStory(story)" class="text-gray-600 hover:bg-gray-100">
                     <Heart class="h-4 w-4 mr-1" />
                     {{ story.likes }}
                   </Button>
-                  <Button variant="ghost" size="sm" @click.stop="shareStory(story)">
+                  <Button variant="ghost" size="sm" @click.stop="shareStory(story)" class="text-gray-600 hover:bg-gray-100">
                     <Share2 class="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" @click.stop="exportStory(story)">
+                  <Button variant="ghost" size="sm" @click.stop="exportStory(story)" class="text-gray-600 hover:bg-gray-100">
                     <Download class="h-4 w-4" />
                   </Button>
                 </div>
@@ -401,25 +333,25 @@ onMounted(() => {
               <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- 文本内容 -->
                 <div class="lg:col-span-2">
-                  <p class="text-lg leading-relaxed text-foreground/90 mb-6 line-clamp-4">
+                  <p class="text-lg leading-relaxed text-gray-700 mb-8 line-clamp-4">
                     {{ story.content }}
                   </p>
                   
                   <!-- 人物和标签 -->
-                  <div class="space-y-3">
-                    <div v-if="story.people.length > 0" class="flex items-center gap-2">
-                      <span class="text-sm font-medium text-muted-foreground">出现人物:</span>
+                  <div class="space-y-4">
+                    <div v-if="story.people.length > 0" class="flex items-center gap-3">
+                      <span class="text-sm font-medium text-gray-600">出现人物:</span>
                       <div class="flex flex-wrap gap-2">
-                        <Badge v-for="person in story.people" :key="person" variant="outline" class="text-xs">
+                        <Badge v-for="person in story.people" :key="person" variant="outline" class="text-xs border-gray-200 text-gray-600">
                           👤 {{ person }}
                         </Badge>
                       </div>
                     </div>
                     
-                    <div class="flex items-center gap-2">
-                      <span class="text-sm font-medium text-muted-foreground">标签:</span>
+                    <div class="flex items-center gap-3">
+                      <span class="text-sm font-medium text-gray-600">标签:</span>
                       <div class="flex flex-wrap gap-2">
-                        <Badge v-for="tag in story.tags" :key="tag" variant="secondary" class="text-xs">
+                        <Badge v-for="tag in story.tags" :key="tag" variant="secondary" class="text-xs bg-gray-100 text-gray-600">
                           {{ tag }}
                         </Badge>
                       </div>
@@ -428,21 +360,21 @@ onMounted(() => {
                 </div>
                 
                 <!-- 图片预览 -->
-                <div class="space-y-4">
-                  <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-6">
+                  <div class="grid grid-cols-2 gap-4">
                     <div 
                       v-for="(image, index) in story.images.slice(0, 4)" 
                       :key="image.id"
-                      class="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:scale-105 transition-transform"
+                      class="aspect-square rounded-lg overflow-hidden bg-gray-100 group-hover:scale-105 transition-transform"
                       :class="{ 'col-span-2': index === 0 && story.images.length > 1 }"
                     >
                       <div class="w-full h-full flex items-center justify-center">
-                        <Camera class="h-8 w-8 text-muted-foreground" />
+                        <Camera class="h-8 w-8 text-gray-400" />
                       </div>
                     </div>
                     <div 
                       v-if="story.images.length > 4"
-                      class="aspect-square rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
+                      class="aspect-square rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-100 transition-colors"
                     >
                       <span class="text-sm font-medium">+{{ story.images.length - 4 }}</span>
                     </div>
@@ -450,18 +382,17 @@ onMounted(() => {
                   
                   <Button 
                     variant="outline" 
-                    class="w-full"
+                    class="w-full border-gray-200 text-gray-700 hover:bg-gray-50"
                     @click="showStoryDetails(story)"
                   >
                     阅读完整故事
                   </Button>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
-    </div>
 
     <!-- 故事详情对话框 -->
     <Dialog v-model:open="showStoryDialog">
@@ -621,6 +552,7 @@ onMounted(() => {
         </div>
       </DialogContent>
     </Dialog>
+    </div>
   </div>
 </template>
 

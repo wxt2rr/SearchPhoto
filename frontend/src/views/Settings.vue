@@ -125,76 +125,77 @@ const modelOptions = [
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- 消息提示 -->
-    <div 
-      v-if="message" 
-      class="p-4 rounded-lg border"
-      :class="{
-        'bg-green-50 border-green-200 text-green-800': messageType === 'success',
-        'bg-red-50 border-red-200 text-red-800': messageType === 'error',
-        'bg-yellow-50 border-yellow-200 text-yellow-800': messageType === 'warning'
-      }"
-    >
-      {{ message }}
-    </div>
+  <div class="min-h-screen bg-white">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+      <!-- 消息提示 -->
+      <div 
+        v-if="message" 
+        class="p-4 rounded-lg border mb-8"
+        :class="{
+          'bg-green-50 border-green-200 text-green-800': messageType === 'success',
+          'bg-red-50 border-red-200 text-red-800': messageType === 'error',
+          'bg-yellow-50 border-yellow-200 text-yellow-800': messageType === 'warning'
+        }"
+      >
+        {{ message }}
+      </div>
 
-    <div>
-      <h1 class="text-3xl font-bold">设置</h1>
-      <p class="text-muted-foreground">配置系统偏好和模型选择</p>
-    </div>
+      <div class="mb-12">
+        <h1 class="text-5xl font-bold text-gray-900 mb-4">设置</h1>
+        <p class="text-xl text-gray-600">配置系统偏好和模型选择</p>
+      </div>
 
-    <Card>
-      <CardHeader>
-        <CardTitle>AI模型选择</CardTitle>
-        <CardDescription>选择用于图片分析和搜索的AI模型</CardDescription>
-      </CardHeader>
-      <CardContent class="space-y-6">
-        <div class="space-y-4">
+      <div class="bg-white border border-gray-200 rounded-lg p-8 mb-12">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-3">AI模型选择</h2>
+          <p class="text-lg text-gray-600">选择用于图片分析和搜索的AI模型</p>
+        </div>
+        
+        <div class="space-y-8">
           <div 
             v-for="model in modelOptions" 
             :key="model.id"
-            class="border rounded-lg p-4 hover:bg-accent transition-colors"
-            :class="{ 'border-primary bg-primary/5': settingStore.selectedModel === model.id }"
+            class="border border-gray-200 rounded-lg p-8 hover:bg-gray-50 transition-colors"
+            :class="{ 'border-gray-400 bg-gray-50': settingStore.selectedModel === model.id }"
           >
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-6">
               <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <h3 class="font-semibold">{{ model.name }}</h3>
+                <div class="flex items-center gap-3 mb-4">
+                  <h3 class="text-2xl font-semibold text-gray-900">{{ model.name }}</h3>
                   <span 
                     v-if="settingStore.selectedModel === model.id"
-                    class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full"
+                    class="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full"
                   >
                     当前使用
                   </span>
                 </div>
-                <p class="text-sm text-muted-foreground mt-1">{{ model.description }}</p>
+                <p class="text-gray-600 mb-6">{{ model.description }}</p>
                 
-                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
-                    <h4 class="text-sm font-medium mb-2">特点：</h4>
-                    <ul class="text-sm space-y-1">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">特点：</h4>
+                    <ul class="space-y-3">
                       <li 
                         v-for="(feature, index) in model.features" 
                         :key="index"
-                        class="flex items-start gap-2"
+                        class="flex items-start gap-3"
                       >
-                        <div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0"></div>
-                        <span>{{ feature }}</span>
+                        <div class="w-2 h-2 rounded-full bg-gray-400 mt-2 flex-shrink-0"></div>
+                        <span class="text-gray-700">{{ feature }}</span>
                       </li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 class="text-sm font-medium mb-2">适用场景：</h4>
-                    <ul class="text-sm space-y-1">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">适用场景：</h4>
+                    <ul class="space-y-3">
                       <li 
                         v-for="(useCase, index) in model.useCases" 
                         :key="index"
-                        class="flex items-start gap-2"
+                        class="flex items-start gap-3"
                       >
-                        <div class="w-1.5 h-1.5 rounded-full bg-secondary mt-1.5 flex-shrink-0"></div>
-                        <span>{{ useCase }}</span>
+                        <div class="w-2 h-2 rounded-full bg-gray-400 mt-2 flex-shrink-0"></div>
+                        <span class="text-gray-700">{{ useCase }}</span>
                       </li>
                     </ul>
                   </div>
@@ -205,10 +206,11 @@ const modelOptions = [
                 @click="handleModelChange(model.id)"
                 variant="outline"
                 :disabled="settingStore.isModelSwitching"
-                :class="{ 'bg-primary text-primary-foreground hover:bg-primary/90': settingStore.selectedModel === model.id }"
+                class="border-gray-200 text-gray-700 hover:bg-gray-50"
+                :class="{ 'bg-gray-200 text-gray-900 hover:bg-gray-300': settingStore.selectedModel === model.id }"
               >
-                <span v-if="settingStore.isModelSwitching && settingStore.selectedModel !== model.id" class="flex items-center gap-2">
-                  <div class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+                <span v-if="settingStore.isModelSwitching && settingStore.switchingToModel === model.id" class="flex items-center gap-2">
+                  <div class="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
                   切换中...
                 </span>
                 <span v-else>
@@ -219,50 +221,51 @@ const modelOptions = [
           </div>
         </div>
         
-        <div class="pt-4 border-t">
-          <h3 class="font-medium mb-2">当前选择的模型：</h3>
-          <div class="text-sm p-3 bg-muted rounded-lg">
-            <div v-if="settingStore.isModelSwitching" class="flex items-center gap-2 text-primary">
-              <div class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+        <div class="pt-8 border-t border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">当前选择的模型：</h3>
+          <div class="text-sm p-4 bg-gray-50 rounded-lg">
+            <div v-if="settingStore.isModelSwitching" class="flex items-center gap-3 text-gray-600">
+              <div class="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
               <span>正在切换模型...</span>
               <div v-if="settingStore.rebuildProgress > 0" class="ml-2">
                 (重建进度: {{ settingStore.rebuildProgress }}%)
               </div>
             </div>
-            <span v-else-if="settingStore.selectedModel">
+            <span v-else-if="settingStore.selectedModel" class="text-gray-900">
               {{
                 modelOptions.find(m => m.id === settingStore.selectedModel)?.name || 
                 settingStore.selectedModel
               }}
             </span>
-            <span v-else class="text-muted-foreground">尚未选择模型</span>
+            <span v-else class="text-gray-500">尚未选择模型</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
 
-    <Card>
-      <CardHeader>
-        <CardTitle>其他设置</CardTitle>
-        <CardDescription>系统其他配置选项</CardDescription>
-      </CardHeader>
-      <CardContent class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="font-medium">启用GPU加速</h3>
-            <p class="text-sm text-muted-foreground">使用GPU提升处理速度（如果可用）</p>
-          </div>
-          <Button variant="outline">开启</Button>
+      <div class="bg-white border border-gray-200 rounded-lg p-8">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-3">其他设置</h2>
+          <p class="text-lg text-gray-600">系统其他配置选项</p>
         </div>
         
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="font-medium">自动备份索引</h3>
-            <p class="text-sm text-muted-foreground">定期备份图片索引数据</p>
+        <div class="space-y-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-medium text-gray-900">启用GPU加速</h3>
+              <p class="text-gray-600 mt-1">使用GPU提升处理速度（如果可用）</p>
+            </div>
+            <Button variant="outline" class="border-gray-200 text-gray-700 hover:bg-gray-50">开启</Button>
           </div>
-          <Button variant="outline">开启</Button>
+          
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-medium text-gray-900">自动备份索引</h3>
+              <p class="text-gray-600 mt-1">定期备份图片索引数据</p>
+            </div>
+            <Button variant="outline" class="border-gray-200 text-gray-700 hover:bg-gray-50">开启</Button>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   </div>
 </template>
